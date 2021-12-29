@@ -30,3 +30,21 @@
 *.exe
 *.out
 *.app
+
+# Visual studio
+
+*.suo
+*.sln
+*.u2d
+*.vfproj
+*\x64
+
+
+# Project-specific
+
+*-back.*
+*.png
+*.docx
+*.txt
+*.dat
+params-*.nml
