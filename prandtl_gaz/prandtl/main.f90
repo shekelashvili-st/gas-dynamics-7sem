@@ -16,7 +16,7 @@ program main
     integer                     :: i, j, k, S, S_p
     real,allocatable            :: tau_w(:)
     
-    !Чтение параметров задачи из файла
+    !Р§С‚РµРЅРёРµ РїР°СЂР°РјРµС‚СЂРѕРІ Р·Р°РґР°С‡Рё РёР· С„Р°Р№Р»Р°
     namelist /params/ imax,jmax,L,H,U_0,mu,rho_0, &
                       eps, S_max, gamma, p_0
     open(newunit=iu, file=input_file, action='read')
@@ -26,7 +26,7 @@ program main
     dy = H/(jmax-1)
     C_0 = p_0/(rho_0**gamma)
     
-    !Инициализация массивов
+    !РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјР°СЃСЃРёРІРѕРІ
     p = Field('Pressure',imax,jmax)
     rho = Field('Density',imax,jmax)
     U = Field('U',imax,jmax)
@@ -40,7 +40,7 @@ program main
         y.fdata(k,:) = H/(jmax-1) * [(j-1, j=1,jmax)]
     end do
     
-    !Начальные условия
+    !РќР°С‡Р°Р»СЊРЅС‹Рµ СѓСЃР»РѕРІРёСЏ
     U.fdata(1,:) = U_0
     V = 0.0
     p = p_0
@@ -50,7 +50,7 @@ program main
     allocate(A(jmax),B(jmax),C(jmax), &
              U_new(jmax),V_new(jmax),rho_new(jmax),p_new(jmax))    
 
-    !Итерационный процесс по координатам
+    !РС‚РµСЂР°С†РёРѕРЅРЅС‹Р№ РїСЂРѕС†РµСЃСЃ РїРѕ РєРѕРѕСЂРґРёРЅР°С‚Р°Рј
     do i=2,imax
         U.fdata(i,:) = U.fdata(i-1,:)
         V.fdata(i,:) = V.fdata(i-1,:)
@@ -64,10 +64,10 @@ program main
         G = 0.5*dy * sum(rho.fdata(i,2:jmax)*U.fdata(i,2:jmax) + &
                        rho.fdata(i,1:jmax-1)*U.fdata(i,1:jmax-1))
         print*, 'G=', G
-!Итерационный процесс по давлению
+!РС‚РµСЂР°С†РёРѕРЅРЅС‹Р№ РїСЂРѕС†РµСЃСЃ РїРѕ РґР°РІР»РµРЅРёСЋ
 do S_p=1,S_max
         do S=1,S_max
-            !Коэффициенты для прогонки
+            !РљРѕСЌС„С„РёС†РёРµРЅС‚С‹ РґР»СЏ РїСЂРѕРіРѕРЅРєРё
             A = [0.0, &
                 (-rho.fdata(i,j-1)*V.fdata(i,j-1)/(2*dy) - mu/dy**2, j=2,jmax-1), &
                 0.0]
@@ -81,7 +81,7 @@ do S_p=1,S_max
                     (rho.fdata(i-1,j)*U.fdata(i-1,j)**2/dx - &
                     (p_new(j) - p.fdata(i-1,j))/dx,j=2,jmax-1), &
                     0.0]
-            !Вызов прогонки
+            !Р’С‹Р·РѕРІ РїСЂРѕРіРѕРЅРєРё
             call tridiag(A(2:),B,C(:jmax-1),U_new)
             V_new = 0.0
             do j=2,jmax-1
@@ -91,7 +91,7 @@ do S_p=1,S_max
                 V_new(j) = V_new(j)/rho.fdata(i,j)
             end do
     
-            !Расчёт погрешности
+            !Р Р°СЃС‡С‘С‚ РїРѕРіСЂРµС€РЅРѕСЃС‚Рё
             eps_u = maxval(abs(U_new - U.fdata(i,:))) / maxval(abs(U_new)) 
             eps_v = maxval(abs(V_new - V.fdata(i,:))) / maxval(abs(V_new))
             write(*,*) 'Iteration(s_p,s_u):', S_p, S
@@ -118,19 +118,19 @@ do S_p=1,S_max
 end do
     end do
     
-    !!Проверка расхода
+    !!РџСЂРѕРІРµСЂРєР° СЂР°СЃС…РѕРґР°
     !do i=1, imax
     !    print*,'i=', i
     !    print*, 'G=', 0.5*dy * sum(rho.fdata(i,2:jmax)*U.fdata(i,2:jmax) + &
     !                  rho.fdata(i,1:jmax-1)*U.fdata(i,1:jmax-1))
     !enddo
     
-    !Работа с трением
+    !Р Р°Р±РѕС‚Р° СЃ С‚СЂРµРЅРёРµРј
     allocate(tau_w(imax))
     tau_w = calc_tau_w(U,mu,dy)
 
 
-    !Вывод результатов
+    !Р’С‹РІРѕРґ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
     call output_Fields([x, y, u, v, p, rho],'sol.dat')
     call output_tauw(x.fdata(2:,1),tau_w(2:),'tau.dat')
     

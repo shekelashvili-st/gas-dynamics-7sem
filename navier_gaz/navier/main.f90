@@ -22,7 +22,7 @@ program main
     integer                     :: i, j, k, S
     real,allocatable            :: tau_w(:)
     
-    !×òåíèå ïàðàìåòðîâ çàäà÷è èç ôàéëà
+    !Ð§Ñ‚ÐµÐ½Ð¸Ðµ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ð¾Ð² Ð·Ð°Ð´Ð°Ñ‡Ð¸ Ð¸Ð· Ñ„Ð°Ð¹Ð»Ð°
     namelist /params/ imax,jmax,L,H,U_0,mu,rho_0,p_0,gamma, &
                       eps, S_max, U_ref, CFL
     open(newunit=iu, file=input_file, action='read')
@@ -32,7 +32,7 @@ program main
     dx = L/imax
     dy = H/jmax
     
-    !Èíèöèàëèçàöèÿ ìàññèâîâ, âû÷èñëåíèå ïàðàìåòðîâ
+    !Ð˜Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸Ñ Ð¼Ð°ÑÑÐ¸Ð²Ð¾Ð², Ð²Ñ‹Ñ‡Ð¸ÑÐ»ÐµÐ½Ð¸Ðµ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ð¾Ð²
     p = Field('Pressure',imax,jmax)
     rho = Field('Density',imax,jmax)
     U = Field('U',imax,jmax)
@@ -51,7 +51,7 @@ program main
     print*, 'Time step=', dtau
     print*, 'Re=', U_0*H/nu
     
-    !Íà÷àëüíûå+ãðàíè÷íûå óñëîâèÿ
+    !ÐÐ°Ñ‡Ð°Ð»ÑŒÐ½Ñ‹Ðµ+Ð³Ñ€Ð°Ð½Ð¸Ñ‡Ð½Ñ‹Ðµ ÑƒÑÐ»Ð¾Ð²Ð¸Ñ
     U = U_0
     P = p_0
     V = 1e-5
@@ -61,7 +61,7 @@ program main
 
     open(101,file='log.txt')
     write(101,*) 'iter eps_u eps_v eps_p'
-    !Èòåðàöèîííûé ïðîöåññ
+    !Ð˜Ñ‚ÐµÑ€Ð°Ñ†Ð¸Ð¾Ð½Ð½Ñ‹Ð¹ Ð¿Ñ€Ð¾Ñ†ÐµÑÑ
     allocate(Ur_barx(imax+1,jmax),Vr_bary(imax,jmax+1),                               &
              Ur_bary(imax,jmax+1),Vr_barx(imax+1,jmax),                               & 
              U_flxx(imax+1,jmax),V_flxy(imax,jmax+1),p_flx(imax+1,jmax+1),            &
@@ -69,7 +69,7 @@ program main
              U_n(0:imax+1,0:jmax+1),V_n(0:imax+1,0:jmax+1),                           &
              p_n(0:imax+1,0:jmax+1), rho_n(0:imax+1,0:jmax+1))
     do s=1, s_max
-        !Ôèçè÷åñêèå ïîòîêè ÷åðåç ãðàíèöû, èíäåêñàöèÿ îò åäèíèöû
+        !Ð¤Ð¸Ð·Ð¸Ñ‡ÐµÑÐºÐ¸Ðµ Ð¿Ð¾Ñ‚Ð¾ÐºÐ¸ Ñ‡ÐµÑ€ÐµÐ· Ð³Ñ€Ð°Ð½Ð¸Ñ†Ñ‹, Ð¸Ð½Ð´ÐµÐºÑÐ°Ñ†Ð¸Ñ Ð¾Ñ‚ ÐµÐ´Ð¸Ð½Ð¸Ñ†Ñ‹
         Ur_barx = 0.5 * (rho.fdata(1:imax+1,1:jmax) * U.fdata(1:imax+1,1:jmax) &
                         + rho.fdata(0:imax,1:jmax) * U.fdata(0:imax,1:jmax))     
         Vr_bary = 0.5 * (rho.fdata(1:imax,1:jmax+1) * V.fdata(1:imax,1:jmax+1) &
@@ -80,8 +80,8 @@ program main
         Vr_barx = 0.5 * (rho.fdata(1:imax+1,1:jmax) * V.fdata(1:imax+1,1:jmax) &
                         + rho.fdata(0:imax,1:jmax) * V.fdata(0:imax,1:jmax))  
         
-    !Óðàâíåíèå íåðàçðûâíîñòè
-        !Ïîòîêè ñîãëàñíî ñõåìå
+    !Ð£Ñ€Ð°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð½ÐµÑ€Ð°Ð·Ñ€Ñ‹Ð²Ð½Ð¾ÑÑ‚Ð¸
+        !ÐŸÐ¾Ñ‚Ð¾ÐºÐ¸ ÑÐ¾Ð³Ð»Ð°ÑÐ½Ð¾ ÑÑ…ÐµÐ¼Ðµ
         where (Ur_barx >= 0.0) U_flxx = U.fdata(0:imax,1:jmax)*rho.fdata(0:imax,1:jmax)
         where (Ur_barx < 0.0)  U_flxx = U.fdata(1:imax+1,1:jmax)*rho.fdata(1:imax+1,1:jmax)
         where (Vr_bary >= 0.0) U_flxy = U.fdata(1:imax,0:jmax)
@@ -104,39 +104,39 @@ program main
         where (Ur_barx < 0.0)  U_flxx = U.fdata(1:imax+1,1:jmax)
         where (Vr_bary >= 0.0) V_flxy = V.fdata(1:imax,0:jmax)
         where (Vr_bary < 0.0)  V_flxy = V.fdata(1:imax,1:jmax+1)
-    !Óðàâíåíèå äâèæåíèÿ, ïðîåêöèÿ íà îñü x
-        !Ïîòîêè ñîãëàñíî ñõåìå, èíäåêñàöèÿ îò åäèíèöû
+    !Ð£Ñ€Ð°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ñ, Ð¿Ñ€Ð¾ÐµÐºÑ†Ð¸Ñ Ð½Ð° Ð¾ÑÑŒ x
+        !ÐŸÐ¾Ñ‚Ð¾ÐºÐ¸ ÑÐ¾Ð³Ð»Ð°ÑÐ½Ð¾ ÑÑ…ÐµÐ¼Ðµ, Ð¸Ð½Ð´ÐµÐºÑÐ°Ñ†Ð¸Ñ Ð¾Ñ‚ ÐµÐ´Ð¸Ð½Ð¸Ñ†Ñ‹
         where (Ur_barx >= 0.0) p_flx(:,1:jmax) = p.fdata(1:imax+1,1:jmax)
         where (Ur_barx < 0.0)  p_flx(:,1:jmax) = p.fdata(0:imax,1:jmax)
         
-        U_n(1:imax,1:jmax) = - diff(Ur_barx*U_flxx,1)/dx - diff(Vr_bary*U_flxy,2)/dy  & !Êîíâåêöèÿ
-            - diff(p_flx(:,1:jmax),1)/dx                                              & !Ãðàäèåíò äàâëåíèÿ
-            + 4/3*mu/dx**2 * diff2(U.fdata,1)                                         & !Âÿçêîñòü, x
-            + mu/dy**2 * diff2(U.fdata,2)                                             & !Âÿçêîñòü, y
-            + 1/3*mu/(4*dy*dx) * diff11(V.fdata)                                        !Âÿçêîñòü, xy
+        U_n(1:imax,1:jmax) = - diff(Ur_barx*U_flxx,1)/dx - diff(Vr_bary*U_flxy,2)/dy  & !ÐšÐ¾Ð½Ð²ÐµÐºÑ†Ð¸Ñ
+            - diff(p_flx(:,1:jmax),1)/dx                                              & !Ð“Ñ€Ð°Ð´Ð¸ÐµÐ½Ñ‚ Ð´Ð°Ð²Ð»ÐµÐ½Ð¸Ñ
+            + 4/3*mu/dx**2 * diff2(U.fdata,1)                                         & !Ð’ÑÐ·ÐºÐ¾ÑÑ‚ÑŒ, x
+            + mu/dy**2 * diff2(U.fdata,2)                                             & !Ð’ÑÐ·ÐºÐ¾ÑÑ‚ÑŒ, y
+            + 1/3*mu/(4*dy*dx) * diff11(V.fdata)                                        !Ð’ÑÐ·ÐºÐ¾ÑÑ‚ÑŒ, xy
         U_n(1:imax,1:jmax) = U_n(1:imax,1:jmax)*dtau                                  &
                              + rho.fdata(1:imax,1:jmax)*U.fdata(1:imax,1:jmax)
         U_n(1:imax,1:jmax) = U_n(1:imax,1:jmax)/rho.fdata(1:imax,1:jmax)
 
         
-    !Óðàâíåíèå äâèæåíèÿ, ïðîåêöèÿ íà îñü y
-        !Ïîòîêè ñîãëàñíî ñõåìå, èíäåêñàöèÿ îò åäèíèöû
+    !Ð£Ñ€Ð°Ð²Ð½ÐµÐ½Ð¸Ðµ Ð´Ð²Ð¸Ð¶ÐµÐ½Ð¸Ñ, Ð¿Ñ€Ð¾ÐµÐºÑ†Ð¸Ñ Ð½Ð° Ð¾ÑÑŒ y
+        !ÐŸÐ¾Ñ‚Ð¾ÐºÐ¸ ÑÐ¾Ð³Ð»Ð°ÑÐ½Ð¾ ÑÑ…ÐµÐ¼Ðµ, Ð¸Ð½Ð´ÐµÐºÑÐ°Ñ†Ð¸Ñ Ð¾Ñ‚ ÐµÐ´Ð¸Ð½Ð¸Ñ†Ñ‹
         where (Vr_bary >= 0.0) p_flx(1:imax,:) = p.fdata(1:imax,1:jmax+1)
         where (Vr_bary < 0.0)  p_flx(1:imax,:) = p.fdata(1:imax,0:jmax)
         
         
-        V_n(1:imax,1:jmax) = - diff(Vr_bary*V_flxy,2)/dy - diff(Ur_barx*V_flxx,1)/dx  & !Êîíâåêöèÿ
-            - diff(p_flx(1:imax,:),2)/dy                                              & !Ãðàäèåíò äàâëåíèÿ
-            + mu/dx**2 * diff2(V.fdata,1)                                             & !Âÿçêîñòü, x
-            + 4/3*mu/dy**2 * diff2(V.fdata,2)                                         & !Âÿçêîñòü, y
+        V_n(1:imax,1:jmax) = - diff(Vr_bary*V_flxy,2)/dy - diff(Ur_barx*V_flxx,1)/dx  & !ÐšÐ¾Ð½Ð²ÐµÐºÑ†Ð¸Ñ
+            - diff(p_flx(1:imax,:),2)/dy                                              & !Ð“Ñ€Ð°Ð´Ð¸ÐµÐ½Ñ‚ Ð´Ð°Ð²Ð»ÐµÐ½Ð¸Ñ
+            + mu/dx**2 * diff2(V.fdata,1)                                             & !Ð’ÑÐ·ÐºÐ¾ÑÑ‚ÑŒ, x
+            + 4/3*mu/dy**2 * diff2(V.fdata,2)                                         & !Ð’ÑÐ·ÐºÐ¾ÑÑ‚ÑŒ, y
             + 1/3*mu/(4*dy*dx) * diff11(U.fdata)   
         V_n(1:imax,1:jmax) = V_n(1:imax,1:jmax)*dtau                                  &
                              + rho.fdata(1:imax,1:jmax)*V.fdata(1:imax,1:jmax)
         V_n(1:imax,1:jmax) = V_n(1:imax,1:jmax)/rho.fdata(1:imax,1:jmax)
     
-    !Ãðàíè÷íûå óñëîâèÿ
+    !Ð“Ñ€Ð°Ð½Ð¸Ñ‡Ð½Ñ‹Ðµ ÑƒÑÐ»Ð¾Ð²Ð¸Ñ
         call b_cond(U_n,V_n,p_n,rho_n,U_0,p_0,rho_0,gamma) 
-    !Ðàñ÷¸ò íåâÿçîê
+    !Ð Ð°ÑÑ‡Ñ‘Ñ‚ Ð½ÐµÐ²ÑÐ·Ð¾Ðº
         eps_u = maxval(abs(U_n - U.fdata)) / dtau
         eps_v = maxval(abs(V_n - V.fdata)) / dtau
         eps_p = maxval(abs(p_n - p.fdata)) / dtau
@@ -153,7 +153,7 @@ program main
             if (prompt=='y') exit
         end if
         
-    !Ïåðåïðèñâîåíèå ìàññèâîâ        
+    !ÐŸÐµÑ€ÐµÐ¿Ñ€Ð¸ÑÐ²Ð¾ÐµÐ½Ð¸Ðµ Ð¼Ð°ÑÑÐ¸Ð²Ð¾Ð²        
         U.fdata = U_n
         V.fdata = V_n
         p.fdata = p_n
@@ -162,12 +162,12 @@ program main
     
     close(101)
 
-    !Ðàáîòà ñ òðåíèåì
+    !Ð Ð°Ð±Ð¾Ñ‚Ð° Ñ Ñ‚Ñ€ÐµÐ½Ð¸ÐµÐ¼
     allocate(tau_w(imax))
     tau_w = calc_tau_w(U,mu,dy)
 
 
-    !Âûâîä ðåçóëüòàòîâ
+    !Ð’Ñ‹Ð²Ð¾Ð´ Ñ€ÐµÐ·ÑƒÐ»ÑŒÑ‚Ð°Ñ‚Ð¾Ð²
     call output_Fields([x, y, u, v ,p, rho],'sol.dat')
     call output_tau_w(x.fdata(1:imax,1),tau_w,'tau.dat')
     

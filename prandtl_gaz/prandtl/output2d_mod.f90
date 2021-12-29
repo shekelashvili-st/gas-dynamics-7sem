@@ -11,12 +11,12 @@ module output2d_mod
     
     open(newunit=iu, file=filename)
     
-    !Вывод шапки файла
+    !Р’С‹РІРѕРґ С€Р°РїРєРё С„Р°Р№Р»Р°
     write(iu,'(a\)') 'VARIABLES = '
     write(iu,'(a)') '"X", "tau_w"' 
     write(iu,*) 'ZONE I=',size(x),', J=',1, ', DATAPACKING=BLOCK'
     
-    !Вывод полей, формат DATAPACKING=BLOCK
+    !Р’С‹РІРѕРґ РїРѕР»РµР№, С„РѕСЂРјР°С‚ DATAPACKING=BLOCK
     write(formt,*) size(x)
     formt = "(" // '100' // "E25.16)"
     write(iu,fmt=formt) x

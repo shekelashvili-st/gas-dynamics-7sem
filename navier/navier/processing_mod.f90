@@ -5,7 +5,7 @@
     contains
     
     function diff(array,dm)
-!Считаем среднюю разность по двум ячейкам, вдоль измерения dim
+!вЂ”С‡РёС‚Р°РµРј СЃСЂРµРґРЅСЋСЋ СЂР°Р·РЅРѕСЃС‚СЊ РїРѕ РґРІСѓРј В¤С‡РµР№РєР°Рј, РІРґРѕР»СЊ РёР·РјРµСЂРµРЅРёВ¤ dim
     real,intent(in)                 :: array(1:,1:)
     integer,intent(in)              :: dm
     real, allocatable               :: diff(:,:)
@@ -24,7 +24,7 @@
     
     
     function diff2(array,dm)
-!Считаем среднюю разность по трем ячейкам, вдоль измерения dim  
+!вЂ”С‡РёС‚Р°РµРј СЃСЂРµРґРЅСЋСЋ СЂР°Р·РЅРѕСЃС‚СЊ РїРѕ С‚СЂРµРј В¤С‡РµР№РєР°Рј, РІРґРѕР»СЊ РёР·РјРµСЂРµРЅРёВ¤ dim  
     real,intent(in)                 :: array(0:,0:)
     integer,intent(in)              :: dm
     real, allocatable               :: diff2(:,:)
@@ -42,7 +42,7 @@
         
 
     subroutine b_cond(U_n,V_n,P_n,U_0,U_e,p_e)
-!Постановка условий на границах
+!С•РѕСЃС‚Р°РЅРѕРІРєР° СѓСЃР»РѕРІРёР№ РЅР° РіСЂР°РЅРёС†Р°С…
     real,intent(inout):: U_n(0:,0:), V_n(0:,0:), P_n(0:,0:)
     real,intent(in)   :: U_0, U_e, p_e
     integer           :: imax,jmax
@@ -73,7 +73,7 @@
     end subroutine b_cond
     
     pure function calc_tau_w(U,mu,dy)
-!Расчёт трения на поверхности пластины
+!вЂ“Р°СЃС‡Р„С‚ С‚СЂРµРЅРёВ¤ РЅР° РїРѕРІРµСЂС…РЅРѕСЃС‚Рё РїР»Р°СЃС‚РёРЅС‹
     type(Field),intent(in) :: U
     real                   :: calc_tau_w(1:U.imax)
     real,intent(in)        :: dy, mu

@@ -2,7 +2,7 @@ module field_mod
     implicit none 
     
     type:: Field
-!Двумерное поле произвольной физической величины.
+!Р”РІСѓРјРµСЂРЅРѕРµ РїРѕР»Рµ РїСЂРѕРёР·РІРѕР»СЊРЅРѕР№ С„РёР·РёС‡РµСЃРєРѕР№ РІРµР»РёС‡РёРЅС‹.
         character(:),allocatable:: long_name
         integer                 :: imax, jmax
         real,allocatable        :: fdata(:,:)
@@ -28,7 +28,7 @@ module field_mod
         generic:: assignment(=)=>Field_assignR, Field_Rassign
     end type Field
 
-!Ссылки на конструкторы для используемых типов данных
+!РЎСЃС‹Р»РєРё РЅР° РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹ РґР»СЏ РёСЃРїРѕР»СЊР·СѓРµРјС‹С… С‚РёРїРѕРІ РґР°РЅРЅС‹С…
     interface Field
         module procedure:: init_Field
     end interface Field
@@ -37,7 +37,7 @@ module field_mod
     contains
     
     subroutine output_Fields(fields,filename)
-!Вывод данных в файл в формате Tecplot. Предполагается, что поля одной размерности.
+!Р’С‹РІРѕРґ РґР°РЅРЅС‹С… РІ С„Р°Р№Р» РІ С„РѕСЂРјР°С‚Рµ Tecplot. РџСЂРµРґРїРѕР»Р°РіР°РµС‚СЃСЏ, С‡С‚Рѕ РїРѕР»СЏ РѕРґРЅРѕР№ СЂР°Р·РјРµСЂРЅРѕСЃС‚Рё.
     type(Field), intent(in) :: fields(1:)
     character(*),intent(in) :: filename
     character(len=100)      :: formt
@@ -45,7 +45,7 @@ module field_mod
     
     sz = size(fields)
     open(newunit=iu, file=filename)
-    !Вывод шапки файла
+    !Р’С‹РІРѕРґ С€Р°РїРєРё С„Р°Р№Р»Р°
     write(iu,'(a\)') 'VARIABLES = '
     do i=1,sz-1
         write(iu,'(a\)') '"' // fields(i).long_name // '", ' 
@@ -53,7 +53,7 @@ module field_mod
     write(iu,'(a)') '"' // fields(sz).long_name // '"' 
     write(iu,*) 'ZONE I=',fields(1).imax,', J=',fields(1).jmax, ', DATAPACKING=BLOCK'
     
-    !Вывод полей, формат DATAPACKING=BLOCK
+    !Р’С‹РІРѕРґ РїРѕР»РµР№, С„РѕСЂРјР°С‚ DATAPACKING=BLOCK
     write(formt,*) fields(1).imax * fields(1).jmax
     formt = "(" // '100' // "E25.16)"
     do i=1,sz
@@ -65,7 +65,7 @@ module field_mod
     
     
     type(Field) function init_Field(name,imax,jmax) result(res)
-!Конструктор для поля
+!РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РґР»СЏ РїРѕР»СЏ
     integer,intent(in)       :: imax, jmax
     character(*),intent(in)  :: name
     res.imax = imax
@@ -76,7 +76,7 @@ module field_mod
     end function init_Field
     
     
-!Много лишнего кода для задания математических операций
+!РњРЅРѕРіРѕ Р»РёС€РЅРµРіРѕ РєРѕРґР° РґР»СЏ Р·Р°РґР°РЅРёСЏ РјР°С‚РµРјР°С‚РёС‡РµСЃРєРёС… РѕРїРµСЂР°С†РёР№
     pure type(Field) function Field_substract(self,x) result(res)
     class(Field),intent(in):: self, x
     res.fdata = self.fdata - x.fdata

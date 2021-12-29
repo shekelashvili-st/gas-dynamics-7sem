@@ -15,7 +15,7 @@ program main
     integer                     :: i, j, k, S
     real,allocatable            :: Ct_th(:), Ct_w(:)
     
-    !Чтение параметров задачи из файла
+    !Р§С‚РµРЅРёРµ РїР°СЂР°РјРµС‚СЂРѕРІ Р·Р°РґР°С‡Рё РёР· С„Р°Р№Р»Р°
     namelist /params/ imax,jmax,L,H,U_0,mu,rho, &
                       eps, S_max
     open(newunit=iu, file=input_file, action='read')
@@ -27,7 +27,7 @@ program main
     print*, 'Re_L=', u_0*L/nu
     pause
     
-    !Инициализация массивов
+    !РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РјР°СЃСЃРёРІРѕРІ
     p = Field('Pressure',imax,jmax)
     U = Field('U',imax,jmax)
     V = Field('V',imax,jmax)
@@ -40,12 +40,12 @@ program main
         y.fdata(k,:) = H/(jmax-1) * [(j-1, j=1,jmax)]
     end do
     
-    !Начальные условия
+    !РќР°С‡Р°Р»СЊРЅС‹Рµ СѓСЃР»РѕРІРёСЏ
     U.fdata(1,:) = U_0
     P = 0.0
     V = 1e-5
     
-    !Итерационный процесс
+    !РС‚РµСЂР°С†РёРѕРЅРЅС‹Р№ РїСЂРѕС†РµСЃСЃ
     allocate(A(jmax),B(jmax),C(jmax),U_new(jmax), V_new(jmax))
     do i=2,imax
         U.fdata(i,:) = U.fdata(i-1,:)
@@ -53,7 +53,7 @@ program main
         eps_u = 0.0
         eps_v = 0.0
         do S=1,S_max
-            !Коэффициенты для прогонки
+            !РљРѕСЌС„С„РёС†РёРµРЅС‚С‹ РґР»СЏ РїСЂРѕРіРѕРЅРєРё
             A = [0.0, &
                 (-V.fdata(i,j-1)/(2*dy) - nu/dy**2, j=2,jmax-1), &
                 0.0]
@@ -67,7 +67,7 @@ program main
                            (U.fdata(i-1,j)**2/dx,j=2,jmax-1), &
                            U_0]
             
-            !Вызов прогонки
+            !Р’С‹Р·РѕРІ РїСЂРѕРіРѕРЅРєРё
             call tridiag(A(2:),B,C(:jmax-1),U_new)
             V_new = 0.0
             do j=2,jmax
@@ -75,7 +75,7 @@ program main
                     (U_new(j)-U.fdata(i-1,j)+U_new(j-1)-U.fdata(i-1,j-1))
             end do
     
-            !Расчёт погрешности
+            !Р Р°СЃС‡С‘С‚ РїРѕРіСЂРµС€РЅРѕСЃС‚Рё
             eps_u = maxval(abs(U_new - U.fdata(i,:))) / maxval(abs(U_new)) 
             eps_v = maxval(abs(V_new - V.fdata(i,:))) / maxval(abs(V_new))
             write(*,*) 'Iteration:', s
@@ -90,13 +90,13 @@ program main
         end do 
     end do
     
-    !Работа с трением
+    !Р Р°Р±РѕС‚Р° СЃ С‚СЂРµРЅРёРµРј
     allocate(Ct_th(imax),Ct_w(imax))
     Ct_th = 0.664/sqrt(U_0*x.fdata(:,1)/nu)
     Ct_w = calc_tau_w(U,mu,dy) * 2 / (rho * U_0**2)
 
 
-    !Вывод результатов
+    !Р’С‹РІРѕРґ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
     call output_Fields([x, y, u, v ,p],'sol_new.dat')
     call output_Ct(x.fdata(2:,1),Ct_th(2:),Ct_w(2:),'tau_new.dat')
     
